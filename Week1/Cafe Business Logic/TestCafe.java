@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class TestCafe {
     public static void main(String[] args) {
@@ -32,7 +33,7 @@ public class TestCafe {
         appTest.displayMenu(menu);
     
 
-        /* ============ displayMenu ============= */
+        /* ============ addCustomer ============= */
         System.out.println("\n----- Add Customer Test-----");
         ArrayList<String> customers = new ArrayList<String>();
         // --- Test 4 times ---
@@ -40,5 +41,31 @@ public class TestCafe {
             appTest.addCustomer(customers);
             System.out.println("\n");
         }
+
+
+        /* ============ Bonus Ninja & Sensei Functionalities ============= */
+
+        /* ============ printPriceChart ============= */
+        System.out.println("\n----- Print Price Chart Test-----");
+        appTest.printPriceChart("Columbian Coffee Grounds", 15.00, 3);
+        System.out.println("\n----- Print Price Chart  Discount Test-----");
+        appTest.printPriceChartDiscounts("Columbian Coffee Grounds", 2.00, 4);
+
+        /* ============ boolean displayMenu ============= */
+        System.out.println("\n----- boolean Display Menu Test-----");
+
+        ArrayList<Double> prices = new ArrayList<Double>();
+        List<Double> listPrices = Arrays.asList(1.5, 2.5, 3.5, 4.5);
+        prices.addAll(listPrices);
+
+        appTest.displayMenu(menu, prices);
+
+        /* ============ Add Customers Test ============= */
+        // copied Sensei to study later
+        System.out.println("\n----- Add Customers Test-----");
+
+        ArrayList<String> newCustomers = new ArrayList<String>();
+
+        appTest.addCustomers(newCustomers);
     }
 }

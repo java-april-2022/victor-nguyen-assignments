@@ -35,6 +35,54 @@ public class CafeUtil {
         System.out.println(customers);
     }
 
+    public void printPriceChart(String product, double price, int maxQuantity) {
+        System.out.printf("%s\n", product);
+        for(int quantity = 1; quantity <= maxQuantity; quantity++) {
+            System.out.printf("%s: $%.2f\n", quantity, quantity * price);
+        }
+    }
+
+
+    public void printPriceChartDiscounts(String product, double price, int maxQuantity) {
+        System.out.printf("%s\n", product);
+        for(int quantity = 1; quantity <= maxQuantity; quantity++) {
+            if (quantity == 1) {
+                System.out.printf("%s: $%.2f\n", quantity, quantity * price);
+            }
+            else {
+                System.out.printf("%s: $%.2f\n", quantity, price + (quantity - 1) * (price - 0.50));
+            }
+        }
+    }
+
+    public boolean displayMenu(ArrayList<String> menuItems, ArrayList<Double> itemPrices) {
+        if (menuItems.size() != itemPrices.size()) {
+            return false;
+        }
+        for (int i = 0; i < menuItems.size(); i++) {
+            System.out.printf("%s - %s: $%.2f %n", i, menuItems.get(i), itemPrices.get(i));
+        }
+        return true;
+    }
+
+// Copied sensei to study later
+
+    public void addCustomers(ArrayList<String> customerList) {
+        boolean finished = false;
+        String input;
+        while (!finished) {
+            System.out.println("Please enter a customer name or press Q to quit:");
+            input = System.console().readLine();
+            if (input.equals("Q")) {
+                finished = true;
+                return;
+            }
+            customerList.add(input);
+            System.out.printf("%s was added to the list.", input);
+            System.out.println(customerList);
+        }
+    }
+
 }
 
 
