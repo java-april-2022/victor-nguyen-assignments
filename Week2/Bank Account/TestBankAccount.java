@@ -12,5 +12,7 @@ public class TestBankAccount {
         bankAccount1.withdrawMoney(6.00, "checkings");
 
         bankAccount1.displayAccountBalance();
+
+        System.out.printf("\n Your account number is %s", bankAccount1.getAccountNumber());
     }
 }
