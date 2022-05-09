@@ -19,7 +19,7 @@ import com.victor.bookclub.services.UserService;
 public class UserController {
 
 	@Autowired
-	private UserService userServ;
+	private UserService users;
 	
 	@GetMapping("/")
 	public String index(Model model) {
@@ -28,19 +28,6 @@ public class UserController {
 		model.addAttribute("newLoginObject", new LoginUser());
 		return "index.jsp";
 		
-	}
-	
-	@GetMapping("/welcome")
-	public String welcome(HttpSession session, Model model) {
-		
-		if (session.getAttribute("userId") == null) {
-			return "redirect:/logout";
-		}
-		else {
-			Long userId = (Long) session.getAttribute("userId");
-			model.addAttribute("user", userServ.findById(userId));
-			return "welcome.jsp";
-		}
 	}
 	
 	@GetMapping("/logout")
@@ -59,7 +46,7 @@ public class UserController {
 			HttpSession session
 			) {
 		
-		User user = userServ.register(newUser, result);
+		User user = users.register(newUser, result);
 		
 		if (result.hasErrors() || user == null) {
 			model.addAttribute("newLoginObject", new LoginUser());
@@ -67,7 +54,7 @@ public class UserController {
 		}
 		else {
 			session.setAttribute("userId",  user.getId());
-			return "redirect:/welcome";
+			return "redirect:/books";
 		}
 	}
 	
@@ -79,7 +66,7 @@ public class UserController {
 			HttpSession session
 			) {
 		
-		User user = userServ.login(newLoginObject, result);
+		User user = users.login(newLoginObject, result);
 		
 		if (result.hasErrors() || user == null) {
 			model.addAttribute("newUser", new User());
@@ -87,7 +74,7 @@ public class UserController {
 		}
 		else {
 			session.setAttribute("userId", user.getId());
-			return "redirect:/welcome";
+			return "redirect:/books";
 		}
 		
 	}
