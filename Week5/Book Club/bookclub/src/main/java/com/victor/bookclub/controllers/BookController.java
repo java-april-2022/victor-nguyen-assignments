@@ -190,4 +190,16 @@ public class BookController {
 		return "redirect:/bookmarket";
 	}
 	
+	@RequestMapping("/books/delete/{id}")
+	public String deleteBook(@PathVariable("id") Long id, HttpSession session) {
+		 
+		if(session.getAttribute("userId") == null) {
+			return "redirect:/logout";
+		}
+    	 
+    	bookServ.deleteBook(bookServ.findBookById(id));
+    	 
+    	return "redirect:/books";
+	}
+	
 }
