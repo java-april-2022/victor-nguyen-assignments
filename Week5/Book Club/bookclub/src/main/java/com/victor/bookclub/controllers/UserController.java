@@ -19,7 +19,7 @@ import com.victor.bookclub.services.UserService;
 public class UserController {
 
 	@Autowired
-	private UserService users;
+	private UserService userServ;
 	
 	@GetMapping("/")
 	public String index(Model model) {
@@ -46,7 +46,7 @@ public class UserController {
 			HttpSession session
 			) {
 		
-		User user = users.register(newUser, result);
+		User user = userServ.register(newUser, result);
 		
 		if (result.hasErrors() || user == null) {
 			model.addAttribute("newLoginObject", new LoginUser());
@@ -66,7 +66,7 @@ public class UserController {
 			HttpSession session
 			) {
 		
-		User user = users.login(newLoginObject, result);
+		User user = userServ.login(newLoginObject, result);
 		
 		if (result.hasErrors() || user == null) {
 			model.addAttribute("newUser", new User());

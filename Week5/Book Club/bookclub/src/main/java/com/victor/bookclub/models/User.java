@@ -51,22 +51,27 @@ public class User {
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date updatedAt;
 	
+	@Column(updatable=false)
 	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
 		private List<Book> books;
 	
+	@Column(updatable=false)
+	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
+		private List<Book> borrowedBooks;
+	
+	@PrePersist
+	protected void onCreate(){
+		this.createdAt = new Date();
+	}
+	@PreUpdate
+	protected void onUpdate(){
+		this.updatedAt = new Date();
+	}
     
     public User() {
     	
     }
 	
-    @PrePersist
-    protected void onCreate(){
-        this.createdAt = new Date();
-    }
-    @PreUpdate
-    protected void onUpdate(){
-        this.updatedAt = new Date();
-    }
     
     public Long getId() {
 		return id;
@@ -130,6 +135,14 @@ public class User {
     
     public void setBooks(List<Book> books) {
 		this.books = books;
+	}
+    
+    public List<Book> getBorrowedBooks() {
+		return borrowedBooks;
+	}
+    
+    public void setBorrowedBooks(List<Book> borrowedBooks) {
+		this.borrowedBooks = borrowedBooks;
 	}
     
 }

@@ -41,6 +41,7 @@
 				</c:forEach>
 			</tbody>
 		</table>
+		<a href="/bookmarket">Would you like to check a book out?</a>
 	</div>
 </body>
 </html>

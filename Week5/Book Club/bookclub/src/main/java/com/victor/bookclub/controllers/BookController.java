@@ -1,5 +1,7 @@
 package com.victor.bookclub.controllers;
 
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.victor.bookclub.models.Book;
 import com.victor.bookclub.models.User;
@@ -22,9 +25,9 @@ import com.victor.bookclub.services.UserService;
 public class BookController {
 
 	@Autowired
-	private BookService books;
+	private BookService bookServ;
 	@Autowired
-	private UserService users;
+	private UserService userServ;
 	
 	@GetMapping("/books")
 	public String books(HttpSession session, Model model) {
@@ -34,8 +37,8 @@ public class BookController {
 		}
 		else {
 			Long userId = (Long) session.getAttribute("userId");
-			model.addAttribute("books", books.all());
-			model.addAttribute("user", users.findById(userId));
+			model.addAttribute("books", bookServ.allBooks());
+			model.addAttribute("user", userServ.findById(userId));
 			return "books.jsp";
 		}
 	}
@@ -43,8 +46,12 @@ public class BookController {
 	@GetMapping("/books/new")
 	public String addBook(@ModelAttribute("book") Book book, Model model, HttpSession session) {
 		
+		if(session.getAttribute("userId") == null) {
+			return "redirect:/logout";
+		}
+		
 		Long userId = (Long) session.getAttribute("userId");
-		User user = users.findById(userId);
+		User user = userServ.findById(userId);
 		model.addAttribute("user", user);
 		return "addbook.jsp";
 		
@@ -53,14 +60,21 @@ public class BookController {
 	@PostMapping("books/new")
 	public String addBookPost(
 			@Valid @ModelAttribute("book") Book book,
-			BindingResult result
+			BindingResult result,
+			HttpSession session
 			) {
+		
+		Long userId = (Long) session.getAttribute("userId");
+		
+		if(userId == null) {
+			return "redirect:/logout";
+		}
 		
 		if (result.hasErrors()) {
 			return "addbook.jsp";
 		}
 		else {
-			books.create(book);
+			bookServ.createBook(new Book(book.getTitle(), book.getAuthor(), book.getThoughts(), userServ.findById(userId)));
 			return "redirect:/books";
 		}
 		
@@ -77,17 +91,17 @@ public class BookController {
 			return "redirect:/logout";
 		}
 		else {
-			Book book = books.findById(id);
+			Book book = bookServ.findBookById(id);
 			User user = book.getUser();
 			Long bookUserId = user.getId();
 			if (session.getAttribute("userId") != bookUserId) {				
 				model.addAttribute("book", book);
-				model.addAttribute("user", users.findById((Long) session.getAttribute("userId")));
+				model.addAttribute("user", userServ.findById((Long) session.getAttribute("userId")));
 				return "showbook.jsp";
 			}
 			else {
 				model.addAttribute("book", book);
-				model.addAttribute("user", users.findById((Long) session.getAttribute("userId")));
+				model.addAttribute("user", userServ.findById((Long) session.getAttribute("userId")));
 				return "showbookuseredit.jsp";
 			}
 			
@@ -106,7 +120,7 @@ public class BookController {
 			return "redirect:/logout";
 		}
 		else {
-			Book book = books.findById(id);
+			Book book = bookServ.findBookById(id);
 			model.addAttribute("book", book);
 			return "editbook.jsp";
 		}
@@ -114,19 +128,66 @@ public class BookController {
 	
 	@PutMapping("/books/{id}/edit")
 	public String editBookPut(
+			@PathVariable("id") Long id,
 			@Valid @ModelAttribute("book") Book book,
 			BindingResult result,
-			Model model
+			Model model,
+			HttpSession session
 			) {
+		
+		if(session.getAttribute("userId") == null) {
+			return "redirect:/logout";
+		}
 		
 		if (result.hasErrors()) {
 			return "editbook.jsp";
 		}
 		else {
-			books.update(book);
+			bookServ.updateBook(book);
 			return "redirect:/books";
 		}
 	}
 	
+	@GetMapping("/bookmarket")
+	public String bookmarket(HttpSession session, Model model) {
+	 
+		Long userId = (Long) session.getAttribute("userId");
+		if(userId == null) {
+			return "redirect:/logout";
+		}
+		
+		model.addAttribute("user", userServ.findById(userId));
+
+		List<Book> books = bookServ.unborrowedBooks(userServ.findById(userId));
+		model.addAttribute("books", books);
+
+		List<Book> myBooks = bookServ.borrowedBooks(userServ.findById(userId));
+		model.addAttribute("myBooks", myBooks);
+		 
+		return "bookmarket.jsp";
+	}
+	
+	@RequestMapping("/bookmarket/{bookID}")
+	public String borrowBook(@PathVariable("bookID") Long bookID, HttpSession session) {
+	 
+		Long userId = (Long) session.getAttribute("userId");
+		if(userId == null) {
+			return "redirect:/logout";
+		}
+		bookServ.addBorrower(bookServ.findBookById(bookID), userServ.findById(userId));
+		 
+		return "redirect:/bookmarket";
+	}
+	
+	@RequestMapping("/bookmarket/return/{bookID}")
+	public String returnBook(@PathVariable("bookID") Long bookID, HttpSession session) {
+	 
+		if(session.getAttribute("userId") == null) {
+			return "redirect:/logout";
+		}
+		bookServ.removeBorrower(bookServ.findBookById(bookID));
+		 
+		return "redirect:/bookmarket";
+	}
 	
 }

@@ -44,9 +44,9 @@ public class Book {
 	@JoinColumn(name="user_id")
 	private User user;
 	
-	public Book() {
-		
-	}
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="borrower_id")
+	private User borrower;
 	
 	@PrePersist
     protected void onCreate(){
@@ -57,6 +57,17 @@ public class Book {
         this.updatedAt = new Date();
     }
 	
+    public Book() {
+    	
+    }
+    
+    public Book(String title, String author, String thoughts, User user) {
+    	this.title = title;
+    	this.author = author;
+    	this.thoughts = thoughts;
+    	this.user = user;
+    }
+    
     public Long getId() {
 		return id;
 	}
@@ -111,6 +122,14 @@ public class Book {
     
     public void setUser(User user) {
 		this.user = user;
+	}
+    
+    public User getBorrower() {
+		return borrower;
+	}
+    
+    public void setBorrower(User borrower) {
+		this.borrower = borrower;
 	}
     
 }
