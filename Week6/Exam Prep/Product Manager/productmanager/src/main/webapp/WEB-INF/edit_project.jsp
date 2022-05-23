@@ -36,7 +36,7 @@
 							<form:label path="dueDate" class="form-label text-start">Due Date: </form:label><br>
 							<form:errors path="dueDate" class="text-danger"/>
 							<fmt:formatDate value="${project.dueDate}" type="date" pattern="MM/dd/yyyy" var="dueDate"/>
-							<form:input path="dueDate" class="form-control" value="${dueDate}" placeholder="${dueDate}" onfocus="(this.type='date')" onblur="this.type='text')"/>
+							<form:input path="dueDate" class="form-control" value="${dueDate}" placeholder="${dueDate}" onfocus="(this.type='date') " onblur="(this.type='text')" />
 						</div>
 						<input type="submit" value="Submit" class="btn btn-primary w-100"/>
 				</div>
